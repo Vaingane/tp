@@ -29,7 +29,7 @@ class OverviewController extends AbstractController
         return $this->render('Sandbox/Overview/hello3.html.twig', $args);
     }
 
-    #[Route('/sandbox/overview/hello4', name: 'sandbox_overview_hello3')]
+    #[Route('/sandbox/overview/hello4', name: 'sandbox_overview_hello4')]
     public function hello4action() : Response
     {
         $args = array(
