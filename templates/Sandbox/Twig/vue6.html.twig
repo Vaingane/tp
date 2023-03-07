@@ -1,0 +1,106 @@
+{% extends  'Sandbox/Layouts/layout3.html.twig' %}
+
+{% block title %}{{ parent() }} : vue 6{% endblock %}
+
+{% block titre_principal %}Titre principal de la vue 6{% endblock %}
+
+{% block vue %}
+    <h2>Qui suis-je ?</h2>
+    <p>
+    Je suis {{ prenom }} et je suis joignable à <em>{{ mail }}</em><br>
+    </p>
+    {# tableau complet #}
+    <h2>Tableau complet</h2>
+    <ul>
+        {#  partie 1 : les mentions #}
+        <li>Mentions
+            <ul>
+                {% for nomCourt, mention in offre.mentions %}
+                    {# traitement d'une mention #}
+                    <li>{{ nomCourt }}
+                        <ul>
+                            <li>nom : {{ mention.nom }}</li>
+                            <li>parcours :
+                                <ul>
+                                    {% for parcour in mention.parcours %}
+                                        <li>parcours {{ loop.index }} : {{ parcour }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </li>
+                            <li>responsable : {{ mention.responsable }}</li>
+                        </ul>
+                    </li>
+                {% endfor %}
+            </ul>
+        </li>
+        {#  partie 2 : les UEs #}
+        <li>UEs
+            <ul>
+                {% for ue in offre.ues %}
+                    {# traitement d'une UE #}
+                    <li>UE {{ loop.index0 }}
+                        <ul>
+                            <li>nom : {{ ue.nom }}</li>
+                            <li>volume : {{ ue.volume }} heure(s)</li>
+                        </ul>
+                    </li>
+                {% endfor %}
+            </ul>
+        </li>
+    </ul>
+    <h2>
+        Dump du tableau des formations
+    </h2>
+    <p>
+        Tips : Ctrl-clic sur les petitess flèches
+    </p>
+    {{ dump(offre) }}
+    <h2>Affichage des mentions</h2>
+    <p>
+        <ul>
+            {# {% for nomCourt, mention in offre['mentions']%} #}
+            {% for nomCourt, mention in offre.mentions %}
+                {# <li>{{ mention['nom']|upper }} ({{  nomCourt }})</li> #}
+                <li>{{ mention.nom|upper }} ({{ nomCourt }})</li>
+            {% endfor %}
+        </ul>
+    </p>
+    <h2>Nom des UEs et leurs volumes horaire</h2>
+    <p>
+    <ul>
+        {# {% for nomCourt, mention in offre['mentions']%} #}
+        {% for ue in offre.ues %}
+            {# <li>{{ mention['nom']|upper }} ({{  nomCourt }})</li> #}
+            <li>{{ ue.nom ~ ' : ' ~ ue.volume}}</li>
+        {% endfor %}
+    </ul>
+    </p>
+    <p>
+        <h2>Nombre de mentions</h2>
+    <p>Il y a {{ offre.mentions | length }} mention {{ offre.mentions | length > 1 ? 's' : '' }}</p>
+    </p>
+    <p>
+        <h2>Filtre <code>format</code></h2>
+    {% set ville = 'Poitiers' %}
+    <p>{{ 'Il y a %d habitants à %s en 1990' | format(78894, ville) }}</p>
+    </p>
+    <p>
+    <h2>Ues dont le volume horaire est &ge; 30</h2>
+    <ul>
+        {% for ue in offre.ues %}
+            {% if ue.volume >= 30 %}
+                <li>{{ ue.nom }} {{ ue.volume }} heure())</li>
+        {% endif %}
+    </ul>
+    </p>
+    <p>
+        <h2>Variable globale <code>app</code></h2>
+        <p>
+            <code>app.session</code> : {{ dump(app.session) }}
+            <code>app.request</code> : {{ dump(app.request) }}
+            <code>app.environment</code> : {{ dump(app.environment) }}
+            <code>app.debug</code> : {{ dump(app.debug) }}
+            <code>app.user</code> : {{ dump(app.user) }}
+        </p>
+    </p>
+{% endblock %}
