@@ -25,6 +25,9 @@ class Film
     #[ORM\Column]
     private ?float $prix = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $quantite = null;
+
     public function __construct(){
         $this->enstock = true;
         $this->quantite = null;
@@ -78,6 +81,18 @@ class Film
     public function setPrix(float $prix): self
     {
         $this->prix = $prix;
+
+        return $this;
+    }
+
+    public function getQuantite(): ?int
+    {
+        return $this->quantite;
+    }
+
+    public function setQuantite(?int $quantite): self
+    {
+        $this->quantite = $quantite;
 
         return $this;
     }
