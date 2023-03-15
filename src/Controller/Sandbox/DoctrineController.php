@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\httpKernel\Exception\NotFoundHttpException;
 
 #[Route('/sandbox/doctrine', name: 'sandbox_doctrine')]
 class DoctrineController extends AbstractController
@@ -25,9 +26,13 @@ class DoctrineController extends AbstractController
         name: '_view',
         requirements: ['id' => '[1-9]\d*'],
     )]
-    public function viewAction(int $id): Response
+    public function viewAction(int $id, EntityManagerInterface $em): Response
     {
+        $filmRepository = $em->getRepository(Film::class);
+        $film = $filmRepository->find($id);
         $args = array(
+            'film' => $film,
+            'id' => $id,
         );
         return $this->render('Sandbox/Doctrine/view.html.twig', $args);
     }
@@ -37,9 +42,21 @@ class DoctrineController extends AbstractController
         name: '_delete',
         requirements: ['id' => '[1-9]\d*'],
     )]
-    public function deleteAction(int $id): Response
+    public function deleteAction(int $id, EntityManagerInterface $em): Response
     {
-        $this->addFlash('info', 'suppression film ' . $id . ' réussie');
+        $filmRepository = $em ->getRepository(Film::class);
+        $film = $filmRepository->find($id);
+
+        if (is_null($film))
+        {
+            $this->addFlash('info', 'suppression film' . $id . ' : échec');
+            throw new NotFoundHttpException('Film' . $id . ' inconnu');
+        }
+
+        $em->remove($film);
+        $em->flush();
+        $this->addFlash('info','suppression film' . $id . ' réussie');
+
         return $this->redirectToRoute('sandbox_doctrine_list');
     }
 
