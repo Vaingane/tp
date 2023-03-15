@@ -3,6 +3,8 @@
 namespace App\Entity\Sandbox;
 
 use App\Repository\Sandbox\FilmRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 #[ORM\Table(name: 'sb_films')]
 #[ORM\Entity(repositoryClass: FilmRepository::class)]
@@ -28,9 +30,13 @@ class Film
     #[ORM\Column(nullable: true)]
     private ?int $quantite = null;
 
+    #[ORM\OneToMany(mappedBy: 'film', targetEntity: Critique::class)]
+    private Collection $critiques;
+
     public function __construct(){
         $this->enstock = true;
         $this->quantite = null;
+        $this->critiques = new ArrayCollection();
     }
     public function getId(): ?int
     {
@@ -93,6 +99,36 @@ class Film
     public function setQuantite(?int $quantite): self
     {
         $this->quantite = $quantite;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Critique>
+     */
+    public function getCritiques(): Collection
+    {
+        return $this->critiques;
+    }
+
+    public function addCritique(Critique $critique): self
+    {
+        if (!$this->critiques->contains($critique)) {
+            $this->critiques->add($critique);
+            $critique->setFilm($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCritique(Critique $critique): self
+    {
+        if ($this->critiques->removeElement($critique)) {
+            // set the owning side to null (unless already changed)
+            if ($critique->getFilm() === $this) {
+                $critique->setFilm(null);
+            }
+        }
 
         return $this;
     }
